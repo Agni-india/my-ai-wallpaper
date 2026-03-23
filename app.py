@@ -10,15 +10,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 2. THEME & CSS (KEEPING IT AS YOU LIKED) ---
+# --- 2. THEME & CSS (KEEPING DARK MODE) ---
 st.markdown("""
     <style>
-    /* Dark Theme Force */
     .stApp {
         background-color: #0E1117;
         color: #FFFFFF;
     }
-    /* Button Styling */
     .stButton>button {
         background-color: #2E3440;
         color: #88C0D0;
@@ -26,12 +24,12 @@ st.markdown("""
         border: 1px solid #88C0D0;
         height: 3em;
         font-weight: bold;
+        width: 100%;
     }
     .stButton>button:hover {
         background-color: #88C0D0;
         color: #2E3440;
     }
-    /* Input Box Styling */
     .stTextInput>div>div>input {
         background-color: #1A1C23;
         color: white;
@@ -42,7 +40,6 @@ st.markdown("""
         text-align: center;
         font-family: 'Courier New', Courier, monospace;
     }
-    /* Hide default menu */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
@@ -56,39 +53,34 @@ st.write("<p style='text-align: center; color: #D8DEE9;'>The Ultimate AI Wallpap
 col1, col2, col3 = st.columns([1, 6, 1])
 
 with col2:
-    prompt = st.text_input("", placeholder="Describe your dream wallpaper (e.g., Cyberpunk Penguin in Tokyo)...")
+    prompt = st.text_input("", placeholder="Describe your dream wallpaper (e.g., Cyberpunk Penguin)...", key="user_input")
     
     # Generate Button
     if st.button("Generate Magic ✨"):
         if prompt:
-            with st.spinner("Wait bhai... Penguin is painting your imagination 🎨"):
+            with st.spinner("Wait bhai... Penguin is painting 🎨"):
                 try:
-                    # Using 'flux' model for higher stability and fewer errors
                     seed = random.randint(1, 1000000)
+                    # Fixed model to FLUX for stability
                     image_url = f"https://pollinations.ai/p/{prompt.replace(' ', '%20')}?width=1280&height=720&seed={seed}&model=flux&nologo=true"
                     
-                    # Verifying if image is accessible
-                    response = requests.get(image_url, timeout=15)
+                    # Testing if server is responding
+                    st.image(image_url, caption=f"Result: {prompt}", use_container_width=True)
                     
-                    if response.status_code == 200:
-                        st.image(image_url, caption=f"Result: {prompt}", use_container_width=True)
-                        
-                        # Download Link Button
-                        st.markdown(f'''
-                            <a href="{image_url}" target="_blank">
-                                <button style="width:100%; background-color:#A3BE8C; color:black; border-radius:10px; padding:10px; border:none; cursor:pointer; font-weight:bold; margin-top:10px;">
-                                    Open & Save Image 📥
-                                </button>
-                            </a>
-                            ''', unsafe_allow_html=True)
-                        st.success("Bhai, wallpaper taiyar hai!")
-                    else:
-                        st.error("Server thoda busy hai, 2-3 second baad phir se 'Generate' dabao!")
+                    # Open/Download Link
+                    st.markdown(f'''
+                        <a href="{image_url}" target="_blank">
+                            <button style="width:100%; background-color:#A3BE8C; color:black; border-radius:10px; padding:10px; border:none; cursor:pointer; font-weight:bold; margin-top:10px;">
+                                Open & Save Image 📥
+                            </button>
+                        </a>
+                        ''', unsafe_allow_html=True)
+                    st.success("Bhai, wallpaper taiyar hai!")
                         
                 except Exception as e:
-                    st.error("Internal connection error! Ek baar phir try karo.")
+                    st.error("Connection error! Ek baar phir try karo.")
         else:
-            st.warning("Bhai, pehle kuch likho toh sahi!")
+            st.warning("Pehle kuch likho toh sahi!")
 
-# --- 4. FOOTER ---
-st.markdown("<br><br><hr><p style='text-align: center; color: #
+# --- 4. FOOTER (FIXED SYNTAX) ---
+st.markdown("<br><br><hr><p style='text-align: center; color: #4C566A;'>Built with Passion by Agni-India</p>", unsafe_allow_html=True)
