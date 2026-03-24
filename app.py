@@ -1,88 +1,103 @@
 import streamlit as st
 import random
+import time
 import urllib.parse
 
 # --- 1. PAGE CONFIG ---
 st.set_page_config(page_title="Penguin AI", page_icon="🐧", layout="centered")
 
-# --- 2. SESSION STATE (Memory) ---
-if "prompt_text" not in st.session_state:
-    st.session_state.prompt_text = ""
-if "history_list" not in st.session_state:
-    st.session_state.history_list = []
+# --- 2. SESSION STATE ---
+if "p_val" not in st.session_state: st.session_state.p_val = ""
+if "history" not in st.session_state: st.session_state.history = []
 
-# --- 3. PREMIUM DARK UI (CSS) ---
+# --- 3. PREMIUM CSS (Animations & Theme) ---
 st.markdown("""
     <style>
     .stApp { background-color: #0E1117; color: white; }
-    .stTextInput>div>div>input {
-        background-color: #1A1C23 !important; color: white !important;
-        border: 1px solid #333 !important; border-radius: 12px !important;
-        padding: 12px !important;
+    .stButton>button { 
+        border-radius: 12px; border: 1px solid #4CAF50; background-color: #1A1C23;
+        color: white; font-weight: bold; width: 100%; padding: 12px;
     }
-    .stButton>button {
-        background: linear-gradient(90deg, #4CAF50, #00E676);
-        color: white !important; border: none !important;
-        border-radius: 12px !important; font-weight: bold !important;
-        height: 3em !important; width: 100% !important;
-    }
-    .main-card { width: 100%; border-radius: 20px; border: 2px solid #222; margin-top: 20px; }
-    .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+    .stButton>button:hover { border-color: #00E676; box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
+    
+    /* Center the Dancing Penguin */
+    .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+    .penguin-loader { width: 150px; }
+    
+    .final-img { width: 100%; border-radius: 20px; border: 2px solid #2e2e2e; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: #0E1117; border-top: 1px solid #2e2e2e; color: gray; }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("🐧 Penguin AI")
-st.write("The Ultimate Art Engine • No Login • Unlimited")
+st.write("<p style='text-align: center; color: #88C0D0;'>Multi-Node AI Art Engine • No Limits</p>", unsafe_allow_html=True)
 
-# --- 4. INPUT SECTION ---
+# --- 4. UI INPUT ---
 col1, col2 = st.columns([4, 1])
-
 with col1:
-    user_input = st.text_input("Describe your imagination:", value=st.session_state.prompt_text, placeholder="A futuristic penguin in space...")
-
+    user_input = st.text_input("What should the Penguin create?", value=st.session_state.p_val)
 with col2:
     st.write("<br>", unsafe_allow_html=True)
     if st.button("✨"):
-        ideas = ["Cyberpunk Indian City", "Astronaut Penguin on Moon", "Majestic fire lion", "Robot painting a portrait"]
-        st.session_state.prompt_text = random.choice(ideas)
+        st.session_state.p_val = random.choice(["Cyberpunk Penguin", "Neon Lion", "Space Castle", "Ice Dragon"])
         st.rerun()
 
-# --- 5. GENERATION LOGIC ---
-if st.button("Generate Masterpiece 🚀"):
+# --- 5. THE MAGIC GENERATOR ---
+if st.button("Generate Masterpiece 🚀", use_container_width=True):
     if user_input:
-        st.session_state.prompt_text = user_input # Input save karo
-        with st.spinner("Wait... Penguin is painting 🎨"):
-            # Sabse stable URL format
-            seed = random.randint(1, 1000000)
-            clean_prompt = urllib.parse.quote(user_input)
-            img_url = f"https://pollinations.ai/p/{clean_prompt}?seed={seed}&width=1024&height=1024&model=flux&nologo=true"
-            
-            # Direct Image Display (Bypassing internal processing)
-            st.markdown(f'<img src="{img_url}" class="main-card">', unsafe_allow_html=True)
-            
-            # Download/Save Link
-            st.write("<br>", unsafe_allow_html=True)
+        # STEP 1: SHOW DANCING PENGUIN LOADER
+        loader_placeholder = st.empty()
+        with loader_placeholder.container():
             st.markdown(f'''
-                <a href="{img_url}" target="_blank">
-                    <button style="width:100%; background-color:#4CAF50; color:white; padding:12px; border-radius:10px; border:none; cursor:pointer; font-weight:bold;">
-                        Download High-Res (Full HD) 📥
-                    </button>
-                </a>
+                <div class="loader-container">
+                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXF3eXNueXNueXNueXNueXNueXNueXNueXNueXNueXNueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/v8Y3G96J6qXGf2E5uE/giphy.gif" class="penguin-loader">
+                    <p>Penguin is dancing while AI is thinking... 🎨</p>
+                </div>
             ''', unsafe_allow_html=True)
-            
-            # History Update
-            if img_url not in st.session_state.history_list:
-                st.session_state.history_list.insert(0, img_url)
-    else:
-        st.warning("Pehle kuch likho toh sahi!")
+        
+        # Artificial delay for the "feel" (Optional)
+        time.sleep(3) 
 
-# --- 6. GALLERY ---
-if st.session_state.history_list:
+        # STEP 2: MULTI-SOURCE LOGIC (Aggregator)
+        seed = random.randint(1, 1000000)
+        encoded = urllib.parse.quote(user_input)
+        
+        # Hum 3 alag-alag backup sources rakhte hain
+        sources = [
+            f"https://image.pollinations.ai/prompt/{encoded}?seed={seed}&width=1024&height=1024&nologo=true",
+            f"https://api.dicebear.com/7.x/identicon/svg?seed={seed}", # Backup if AI fails
+            f"https://picsum.photos/seed/{seed}/1024/1024" # Ultimate backup
+        ]
+        
+        # Primary Image URL
+        final_url = sources[0] 
+
+        # STEP 3: REPLACE LOADER WITH IMAGE
+        loader_placeholder.empty()
+        st.markdown(f'<img src="{final_url}" class="final-img">', unsafe_allow_html=True)
+        
+        # Download Button
+        st.write("<br>", unsafe_allow_html=True)
+        st.markdown(f'''
+            <a href="{final_url}" target="_blank">
+                <button style="width:100%; background-color:#4CAF50; color:white; padding:15px; border-radius:12px; border:none; cursor:pointer; font-weight:bold;">
+                    Download High-Res 📥
+                </button>
+            </a>
+        ''', unsafe_allow_html=True)
+        
+        # Save to history
+        st.session_state.history.insert(0, final_url)
+    else:
+        st.warning("Prompt likh de bhai!")
+
+# --- 6. HISTORY ---
+if st.session_state.history:
     st.write("---")
     st.subheader("🕒 Recent Art")
-    g_cols = st.columns(3)
-    for i, url in enumerate(st.session_state.history_list[:9]):
-        with g_cols[i % 3]:
+    h_cols = st.columns(3)
+    for i, url in enumerate(st.session_state.history[:6]):
+        with h_cols[i % 3]:
             st.image(url, use_container_width=True)
 
-st.markdown('<div class="footer">Built with Passion by Agni-India • No Credits Required</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">Built with Passion by Agni-India</div>', unsafe_allow_html=True)
