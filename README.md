@@ -1,12 +1,9 @@
-# 🐧 Penguin AI - Unlimited AI Wallpapers
+# 🐧 Penguin AI
+### Instant AI Image Generation. No Login. No Limits.
 
-**Penguin AI** is a high-speed AI Image Generation web app. Create stunning, high-resolution wallpapers instantly using advanced AI technology.
+**How to use:**
+1. Type your prompt.
+2. Hit **Generate**.
+3. Download your HD Art.
 
-## ✨ Features
-* **Free & Unlimited:** No limits on creativity.
-* **Instant Generation:** Powered by Pollinations AI.
-* **High Quality:** Optimized for mobile and desktop screens.
-* **Easy Download:** Save your creations with one click.
-
----
-*Built with ❤️ by Penguin AI*
+Built by **Agni-India** using Flux AI Engine. 🚀
